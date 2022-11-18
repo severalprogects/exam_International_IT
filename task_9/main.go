@@ -37,12 +37,22 @@ const (
 )
 
 // Поиск символа "!", для понимания того, необходимо ли нам игнорировать символ ">", необходимо осуществлять рекурсивно
+func searchExcP(check bool, data []byte, i *int) bool {
+	if string(data[*i+1]) == "!" {
+		*i++
+		searchExcP(!check, data, i)
+	}
+	return check
+}
+
+/*
 func searchExcP(data []byte, i int, check bool) bool {
 	if string(data[i-1]) == "!" {
 		searchExcP(data, i-1, !check)
 	}
 	return check
 }
+*/
 
 func main() {
 	data, err := ioutil.ReadFile("09.txt")
@@ -63,10 +73,31 @@ func main() {
 				searchData = searchData + string(data[i])
 			}
 		} else {
-			if (string(data[i]) == ">") && (searchExcP(data, i, isnCheck)) {
+			if string(data[i]) == "!" { //Если мы в мусоре, то проверяем в позиции знак "!"
+				i++
+				/*
+					if searchExcP(isCheck, data, &i) { //Если ряд из знаков "!" влияет на следующий после них знак, то мы пропускаем этот знак
+						i++
+					} else { //
+						if string(data[i]) == ">" {
+							myFlag = isnCheck
+						}
+					}
+					if (!searchExcP(isCheck, data, &i))
+				*/
+			} else if string(data[i]) == ">" {
 				myFlag = isnCheck
 			}
+
+			/*
+				if (string(data[i]) == ">") && (searchExcP(data, i, isCheck)) {
+					myFlag = isnCheck
+				}
+			*/
 		}
 	}
+	fmt.Print(string(data))
+	fmt.Println()
+	fmt.Println("=======================================================================")
 	fmt.Print(searchData)
 }
