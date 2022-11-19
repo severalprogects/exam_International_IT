@@ -36,32 +36,15 @@ const (
 	isnCheck = false
 )
 
-// Поиск символа "!", для понимания того, необходимо ли нам игнорировать символ ">", необходимо осуществлять рекурсивно
-func searchExcP(check bool, data []byte, i *int) bool {
-	if string(data[*i+1]) == "!" {
-		*i++
-		searchExcP(!check, data, i)
-	}
-	return check
-}
-
-/*
-func searchExcP(data []byte, i int, check bool) bool {
-	if string(data[i-1]) == "!" {
-		searchExcP(data, i-1, !check)
-	}
-	return check
-}
-*/
-
 func main() {
+	// Считываем данный из файла в слайс битов, и если ошибки нет, то работаем с полученными данными
 	data, err := ioutil.ReadFile("09.txt")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	searchData := ""
-	myFlag := isnCheck
+	searchData := ""   // Мы ищем все данные, кроме мусора
+	myFlag := isnCheck // Флаг для понимания, зашли мы в мусор или нет
 
 	for i := 0; i < len(data); i++ {
 		//Если мы до этого еще не заходили в "мусор" и если мы в позиции символа "<",
@@ -70,34 +53,37 @@ func main() {
 			if string(data[i]) == "<" {
 				myFlag = isCheck
 			} else {
-				searchData = searchData + string(data[i])
+				searchData += string(data[i])
 			}
 		} else {
-			if string(data[i]) == "!" { //Если мы в мусоре, то проверяем в позиции знак "!"
+			if string(data[i]) == "!" { //Если мы в мусоре, то проверяем в позиции знак "!", после него знаки не действительны
 				i++
-				/*
-					if searchExcP(isCheck, data, &i) { //Если ряд из знаков "!" влияет на следующий после них знак, то мы пропускаем этот знак
-						i++
-					} else { //
-						if string(data[i]) == ">" {
-							myFlag = isnCheck
-						}
-					}
-					if (!searchExcP(isCheck, data, &i))
-				*/
-			} else if string(data[i]) == ">" {
+			} else if string(data[i]) == ">" { // Если нашли знак ">", то выходим из "мусора"
 				myFlag = isnCheck
 			}
-
-			/*
-				if (string(data[i]) == ">") && (searchExcP(data, i, isCheck)) {
-					myFlag = isnCheck
-				}
-			*/
 		}
 	}
-	fmt.Print(string(data))
-	fmt.Println()
-	fmt.Println("=======================================================================")
-	fmt.Print(searchData)
+	data = []byte(searchData)
+	searchData = ""
+
+	//После того, как все действительные данные были найдены, выделяем символы "{", "}" от запятых
+	for i := 0; i < len(data); i++ {
+		if (string(data[i]) == "{") || (string(data[i]) == "}") {
+			searchData += string(data[i])
+		}
+	}
+	data = []byte(searchData)
+	searchData = ""
+
+	//Считаем сумму очков для всех групп
+	sum, j := 0, 0
+	for i := 0; i < len(data); i++ {
+		if string(data[i]) == "{" {
+			j++
+			sum += j
+		} else if string(data[i]) == "}" {
+			j--
+		}
+	}
+	fmt.Println(sum)
 }
