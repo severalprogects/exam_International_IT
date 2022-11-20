@@ -39,24 +39,24 @@ func (s *sidePrism) searchV() int64 {
 }
 
 // Подсчет площади минимальной стороны призмы (вторая часть уравнения)
-func (s *sidePrism) searchMinP() int64 {
-	P := [3]int64{}
-	P[0] = s.l * s.h
-	P[1] = s.l * s.w
-	P[2] = s.h * s.w
+func (s *sidePrism) searchMinS() int64 {
+	S := [3]int64{}
+	S[0] = s.l * s.h
+	S[1] = s.l * s.w
+	S[2] = s.h * s.w
 
-	minP := P[0] //Минимальная площадь одной из сторон призмы
+	minS := S[0] //Минимальная площадь одной из сторон призмы
 	for i := 1; i < 3; i++ {
-		if minP > P[i] {
-			minP = P[i]
+		if minS > S[i] {
+			minS = S[i]
 		}
 	}
-	return minP
+	return minS
 }
 
 // Итоговое значения необходимого кол-ва футов картона
-func (s *sidePrism) searchVP() int64 {
-	VP := s.searchV() + s.searchMinP()
+func (s *sidePrism) searchVS() int64 {
+	VP := s.searchV() + s.searchMinS()
 	return VP
 }
 
@@ -73,7 +73,7 @@ func main() {
 	// Выделяем отдельные значения сторон из строк в слайс структур
 	dataLinePart := []string{}
 	prism := sidePrism{}
-	sumVP := 0
+	sumVS := 0
 
 	// Считываем l, w, h для каждой призмы в структуру, и считыем необходимое кол-во футов картона
 	for i := 0; i < len(dataLine); i++ {
@@ -94,8 +94,8 @@ func main() {
 			log.Fatal(err)
 		}
 
-		sumVP += int(prism.searchVP())
+		sumVS += int(prism.searchVS())
 	}
 
-	fmt.Println(sumVP)
+	fmt.Println(sumVS)
 }
